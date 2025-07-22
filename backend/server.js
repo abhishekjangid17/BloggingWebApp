@@ -13,24 +13,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ✅ CORS should be declared at the top
-const allowedOrigins = [ "https://mern-blog-ha28.onrender.com"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://mern-blog-ha28.onrender.com"
+];
 
 app.use(cors({
   origin: function (origin, callback) {
+    // ✅ Allow undefined origin for non-browser requests (Render health check, SSR etc.)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      console.log("Blocked by CORS origin:", origin);
+      callback(null, false);  // prevent error throw
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
 
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
 
 // ✅ Middlewares
 app.use(express.json());
