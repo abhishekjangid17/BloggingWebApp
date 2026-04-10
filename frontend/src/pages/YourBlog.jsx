@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
+import API from '../api'
 import { setBlog } from '@/redux/blogSlice'
 import { Edit, Eye, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -73,7 +73,7 @@ const YourBlog = () => {
 
     const getOwnBlog = async () => {
         try {
-            const res = await axios.get(`https://mern-blog-ha28.onrender.com/api/v1/blog/get-own-blogs`, { withCredentials: true })
+            const res = await API.get(`/api/v1/blog/get-own-blogs`, { withCredentials: true })
             if (res.data.success) {
                 dispatch(setBlog(res.data.blogs))
             }
@@ -84,7 +84,7 @@ const YourBlog = () => {
     }
     const deleteBlog = async (id) => {
         try {
-            const res = await axios.delete(`https://mern-blog-ha28.onrender.com/api/v1/blog/delete/${id}`, { withCredentials: true })
+            const res = await API.delete(`/api/v1/blog/delete/${id}`, { withCredentials: true })
             if (res.data.success) {
                 const updatedBlogData = blog.filter((blogItem) => blogItem?._id !== id);
                 dispatch(setBlog(updatedBlogData))

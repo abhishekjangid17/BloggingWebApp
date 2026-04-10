@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input'
 import { Link, useNavigate } from 'react-router-dom'
 import { Textarea } from '@/components/ui/textarea'
-import axios from 'axios'
+import API from '../api'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { setUser } from '@/redux/authSlice'
@@ -69,7 +69,7 @@ const Profile = () => {
 
         try {
             setLoading(true)
-            const res = await axios.put(`https://mern-blog-ha28.onrender.com/api/v1/user/profile/update`, formData, {
+            const res = await API.put(`/api/v1/user/profile/update`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 },

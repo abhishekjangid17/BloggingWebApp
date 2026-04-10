@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import axios from 'axios'
+import API from '../api'
 import { Edit, Eye, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ const Comments = () => {
     const navigate = useNavigate()
     const getTotalComments = async()=>{
         try {
-          const res = await axios.get(`https://mern-blog-ha28.onrender.com/api/v1/comment/my-blogs/comments`,{withCredentials:true})
+          const res = await API.get(`/api/v1/comment/my-blogs/comments`,{withCredentials:true})
           if(res.data.success){
             setAllComments(res.data.comments)
           }

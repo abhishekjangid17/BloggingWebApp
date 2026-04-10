@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import React, { useState } from 'react'
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import API from '../api'
 import { toast } from 'sonner'
 import auth from "../assets/auth.jpg"
 
@@ -32,7 +32,7 @@ const Signup = () => {
         console.log(user)
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/v1/user/register`, user, {
+            const response = await API.post(`http://localhost:5000/api/v1/user/register`, user, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -53,7 +53,7 @@ const Signup = () => {
 
         // try {
         //     dispatch(setLoading(true))
-        //     const response = await axios.post("", user, {
+        //     const response = await API.post("", user, {
         //         headers: {
         //             "Content-Type": "application/json",
         //         },

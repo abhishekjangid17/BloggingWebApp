@@ -1,7 +1,7 @@
 import BlogCard from '@/components/BlogCard'
 import React, { useEffect } from 'react'
 import LMS from "../assets/LMS.png"
-import axios from 'axios'
+import API from '../api'
 import { useDispatch, useSelector } from 'react-redux'
 import { setBlog } from '@/redux/blogSlice'
 // import BlogCardList from '@/components/BlogCardList'
@@ -68,7 +68,7 @@ const Blog = () => {
     useEffect(() => {
         const getAllPublsihedBlogs = async () => {
             try {
-                const res = await axios.get(`https://mern-blog-ha28.onrender.com/api/v1/blog/get-published-blogs`, { withCredentials: true })
+                const res = await API.get(`/api/v1/blog/get-published-blogs`, { withCredentials: true })
                 if (res.data.success) {
                     dispatch(setBlog(res.data.blogs))
                 }
