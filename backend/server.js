@@ -12,9 +12,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ CORS should be declared at the top
-const allowedOrigins = ["http://localhost:5173", "https://mern-blog-ha28.onrender.com"];
-
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5000",
+  "https://blogging-web-app-gamma.vercel.app",  // ✅ add this
+];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
