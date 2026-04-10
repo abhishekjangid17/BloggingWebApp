@@ -32,7 +32,7 @@ const Login = () => {
     console.log(input);
 
     try {
-      const response = await API.post(`http://localhost:5000/api/v1/user/login`, input, {
+      const response = await API.post(`/api/v1/user/login`, input, {
         headers: {
           "Content-Type": "application/json"
         },
