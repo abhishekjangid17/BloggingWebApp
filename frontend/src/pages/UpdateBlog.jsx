@@ -63,58 +63,51 @@ const UpdateBlog = () => {
     };
 
     const updateBlogHandler = async () => {
-
-        const formData = new FormData();
-        formData.append("title", blogData.title);
-        formData.append("subtitle", blogData.subtitle);
-        formData.append("description", content);
-        formData.append("category", blogData.category);
+    const formData = new FormData();
+    formData.append("title", blogData.title);
+    formData.append("subtitle", blogData.subtitle);
+    formData.append("description", content);
+    formData.append("category", blogData.category);
+    if (blogData.thumbnail) {
         formData.append("file", blogData.thumbnail);
-        try {
-            setLoading(true)
-            const res = await API.put(`/api/v1/blog/${id}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                },
+    }
+    try {
+        setLoading(true);
+        const res = await API.put(`/api/v1/blog/${id}`, formData, {
+            withCredentials: true, // ✅ no manual Content-Type
+        });
+        if (res.data.success) {
+            toast.success(res.data.message);
+        }
+    } catch (error) {
+        console.log(error);
+        toast.error("Update failed");
+    } finally {
+        setLoading(false);
+    }
+};
+
+const togglePublishUnpublish = async (action) => {
+    try {
+        const res = await API.patch(
+            `/api/v1/blog/${id}`,
+            {},                          // ✅ empty body
+            {
+                params: { action },      // ✅ config goes here
                 withCredentials: true,
-            })
-            if (res.data.success) {
-                toast.success(res.data.message)
-                // dispatch([...course, setCourse(res.data.course)])
-                console.log(blogData);
-
-
             }
-        } catch (error) {
-            console.log(error);
-
-        } finally {
-            setLoading(false)
+        );
+        if (res.data.success) {
+            setPublish(!publish);
+            toast.success(res.data.message);
+            navigate(`/dashboard/your-blog`);
+        } else {
+            toast.error("Failed to update");
         }
+    } catch (error) {
+        console.log(error);
     }
-
-    const togglePublishUnpublish = async (action) => {
-        console.log("action", action);
-
-        try {
-            const res = await API.patch(`/api/v1/blog/${id}`, {
-                params: {
-                    action
-                },
-                withCredentials: true
-            })
-            if (res.data.success) {
-                setPublish(!publish)
-                toast.success(res.data.message)
-                navigate(`/dashboard/your-blog`)
-            } else {
-                toast.error("Failed to update")
-            }
-        } catch (error) {
-            console.log(error);
-
-        }
-    }
+};
 
     const deleteBlog = async () => {
         try {
