@@ -7,16 +7,23 @@ import commentRoute from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// ✅ Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5000",
-  "https://blogging-web-app-gamma.vercel.app",  // ✅ add this
+  "https://blogging-web-app-gamma.vercel.app",
 ];
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -26,12 +33,7 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"] // ✅ add PATCH
-}));
-
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
 }));
 
 // ✅ Middlewares
@@ -44,12 +46,10 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/blog", blogRoute);
 app.use("/api/v1/comment", commentRoute);
 
-// ✅ Serve frontend
-const _dirname = path.resolve();
-app.use(express.static(path.join(_dirname, "/frontend/dist")));
-
+// ✅ Serve frontend - fixed path using __dirname
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 app.get("*", (_, res) => {
-  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
 });
 
 // ✅ Start server
