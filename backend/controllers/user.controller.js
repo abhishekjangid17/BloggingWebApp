@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
-
+const isProduction = process.env.NODE_ENV === "production"
 
 export const register = async (req, res) => {
     try {
@@ -93,7 +93,7 @@ export const login = async(req, res) => {
         }
         
         const token = await jwt.sign({userId:user._id}, process.env.JWT_SECRET, { expiresIn: '1d' })
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: "strict" }).json({
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, secure: isProduction, sameSite: isProduction ? "none" : "lax" }).json({
             success:true,
             message:`Welcome back ${user.firstName}`,
             user
@@ -121,15 +121,10 @@ export const logout = async (_, res) => {
 
 export const updateProfile = async(req, res) => {
     try {
-        const userId= req.id
+        const userId = req.id
         const {firstName, lastName, occupation, bio, instagram, facebook, linkedin, github} = req.body;
-        const file = req.file;
-
-        const fileUri = getDataUri(file)
-        let cloudResponse = await cloudinary.uploader.upload(fileUri)
-
-        const user = await User.findById(userId).select("-password")
         
+        const user = await User.findById(userId).select("-password")
         if(!user){
             return res.status(404).json({
                 message:"User not found",
@@ -137,7 +132,16 @@ export const updateProfile = async(req, res) => {
             })
         }
 
-        // updating data
+        // ✅ Only upload if file is provided
+        const file = req.file;
+        if(file){
+            const fileUri = getDataUri(file)
+            const cloudResponse = await cloudinary.uploader.upload(fileUri)
+            if(cloudResponse?.secure_url){
+                user.photoUrl = cloudResponse.secure_url
+            }
+        }
+
         if(firstName) user.firstName = firstName
         if(lastName) user.lastName = lastName
         if(occupation) user.occupation = occupation
@@ -146,7 +150,6 @@ export const updateProfile = async(req, res) => {
         if(linkedin) user.linkedin = linkedin
         if(github) user.github = github
         if(bio) user.bio = bio
-        if(file) user.photoUrl = cloudResponse.secure_url
 
         await user.save()
         return res.status(200).json({
@@ -154,7 +157,6 @@ export const updateProfile = async(req, res) => {
             success:true,
             user
         })
-        
     } catch (error) {
         console.log(error);
         return res.status(500).json({
