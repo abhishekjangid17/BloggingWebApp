@@ -22,13 +22,18 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5000",
   "https://blogging-web-app-gamma.vercel.app",
+  "https://bloggingwebapp-d2o3.onrender.com", // ✅ add this
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
-    } else {
+    } else {const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5000",
+  "https://blogging-web-app-gamma.vercel.app",
+];
       callback(new Error("Not allowed by CORS"));
     }
   },
